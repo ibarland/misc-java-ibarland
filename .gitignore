@@ -31,11 +31,15 @@ package.bluej
 
 # Executables
 *.exe
-*.out
+a.out
 *.app
 *.i*86
 *.x86_64
 *.hex
+*.bin
+# Most files are libraries (generating .o), and already ignored.
+# One exception are the executable C tests:
+*-test
 
 # Debug files
 *.dSYM/
