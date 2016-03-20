@@ -33,24 +33,23 @@
  * executable argv[0] is "-n", etc.)!
  */
 
-class CommandLineOption /*extends ObjectIan*/ {
+class CommandLineOption extends ObjectIan {
 
     String longOption;
     char shortOption;
     String defaultValue;
     String helpString;
 
-    //CommandLineOption( Object... args ) { super(args); } // ObjectIan provides boilerplate constructor, equals, hashcode.
-    CommandLineOption( String _longOption, char _shortOption, String _defaultValue, String _helpString ) {
+    CommandLineOption( Object... args ) { super(args); } // ObjectIan provides boilerplate constructor, equals, hashcode.
+    /*CommandLineOption( String _longOption, char _shortOption, String _defaultValue, String _helpString ) {
         this.longOption = _longOption;
         this.shortOption = _shortOption;
         this.defaultValue = _defaultValue;
         this.helpString = _helpString;
         }
-    
+    */
     /* Given a string of form "--otherStuff", return the otherStuff.
      * If it wasn't of that form, return null.
-     * (The result is a pointer into the provided argument.)
      */
     /*private*/ static String extractLongOptionName( String arg ) {
         if (arg==null || arg.length() <= 2 || !arg.substring(0,2).equals("--")) 
