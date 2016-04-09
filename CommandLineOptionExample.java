@@ -12,7 +12,7 @@ public class CommandLineOptionExample {
          new CommandLineOption( "file",  'f',  "foo.txt", "the file to blazblarg" )
         ,new CommandLineOption( "name",  'n',  "ibarland", "the primary blazlbarger"  )
         ,new CommandLineOption( "size",  's',  "98", "how many blazzes to blarg (in dozens)" )
-        ,new CommandLineOption( "stuff", '\0', null, "what to call your stuff" )
+        ,new CommandLineOption( "stuff", null, null, "what to call your stuff" )
         ,new CommandLineOption( "otherStuff", 'o', "blarg", "the help info for other stuff" )
         };
 

@@ -36,7 +36,7 @@
 class CommandLineOption extends ObjectIan {
 
     String longOption;
-    char shortOption;
+    Character shortOption;
     String defaultValue;
     String helpString;
 
@@ -62,9 +62,9 @@ class CommandLineOption extends ObjectIan {
     /* Given a string of form "-someChar", return the char.
      * If it wasn't of that form, return '\0'.
      */
-    /*private*/ static char extractShortOptionName( String arg ) {
+    /*private*/ static Character extractShortOptionName( String arg ) {
         if (arg==null || arg.length() != 2 || arg.charAt(0) != '-' || arg.equals("--")) {
-            return '\0';
+            return null;
             }
         else {
             return arg.charAt(1);
@@ -81,10 +81,10 @@ class CommandLineOption extends ObjectIan {
         String answerSoFar = target.defaultValue;
         for (int i=0;  i < haystack.length-1;  ++i) {
             if (haystack[i].equals("--")) break;  /* "--" stops option-processing */
-            String asLongOption  = extractLongOptionName( haystack[i]);
-            char  asShortOption = extractShortOptionName(haystack[i]);
-            if (   (asLongOption  != null  && asLongOption.equals(target.longOption))
-                || (asShortOption != '\0' && asShortOption == target.shortOption)) {
+            String    asLongOption  = extractLongOptionName( haystack[i]);
+            Character asShortOption = extractShortOptionName(haystack[i]);
+            if (   (asLongOption  != null &&  asLongOption.equals(target.longOption))
+                || (asShortOption != null && asShortOption.equals(target.shortOption))) {
                 answerSoFar = haystack[i+1];
                 ++i;  // skip over haystack[i+1] as a potential next-arg.
                 }
@@ -97,15 +97,15 @@ class CommandLineOption extends ObjectIan {
      */
     /*private*/ static boolean apparentOptionIsLegal( CommandLineOption[] options, String arg ) {
         String asLongOption  = extractLongOptionName(  arg );
-        char  asShortOption = extractShortOptionName( arg );
-        if (asLongOption==null && asShortOption=='\0') return true; 
+        Character  asShortOption = extractShortOptionName( arg );
+        if (asLongOption==null && asShortOption==null) return true; 
         /* Doesn't look like it's trying to be an option, so no problem. */
     
         for (int i=0;  i< options.length;  ++i) {
             if (asLongOption!=null) {
                 if (asLongOption.equals( options[i].longOption )) return true;
                 }
-            else if (asShortOption!='\0') {
+            else if (asShortOption!=null) {
                 if (asShortOption==options[i].shortOption) return true;
                 }
             else {

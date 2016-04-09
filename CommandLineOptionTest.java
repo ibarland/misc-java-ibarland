@@ -18,15 +18,15 @@ public class CommandLineOptionTest {
 
     @Test
     public void testExtractShortOptionName(){
-        assertEquals( 'h',  CommandLineOption.extractShortOptionName("-h"));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName("h"));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName("hello"));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName("--hello"));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName("h-"));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName("-"));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName("--"));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName(""));
-        assertEquals( '\0', CommandLineOption.extractShortOptionName(null));
+        assertEquals( new Character('h'), CommandLineOption.extractShortOptionName("-h"));
+        assertEquals( null, CommandLineOption.extractShortOptionName("h"));
+        assertEquals( null, CommandLineOption.extractShortOptionName("hello"));
+        assertEquals( null, CommandLineOption.extractShortOptionName("--hello"));
+        assertEquals( null, CommandLineOption.extractShortOptionName("h-"));
+        assertEquals( null, CommandLineOption.extractShortOptionName("-"));
+        assertEquals( null, CommandLineOption.extractShortOptionName("--"));
+        assertEquals( null, CommandLineOption.extractShortOptionName(""));
+        assertEquals( null, CommandLineOption.extractShortOptionName(null));
         }
 
 
