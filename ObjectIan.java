@@ -2,43 +2,47 @@ import java.util.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-// To make a class that gets a free constructor, equals, hash, toString
-// for immutable data:
+// To make a class that gets a free constructor, equals, hash, toString for immutable data:
 // 
+//
 // class Lala extends ObjectIan {
-//  int n;
-//  String s;
+//   int n;
+//   String s;   // default-initialized fields won't work :-(
 //  
-//  /** A constructor which assigns each arg
-//   * to the fields in alphabetical order.
-//   * Must be same number of args as fields.
-//   */
-//  Lala( Object... args ) { super(args); }
-//   
-//  }
-  
-  
-  
-//  public static void main( String[] args ) {
-//    // Demo the constructor:
-//    Lala la1 = new Lala( 3, "hello" );
-//    Lala la2a = new Lala( 5, "bye" );
-//    Lala la2b = new Lala( 5, "bye" );
-//    
-//    // Demo toString:
-//    System.out.println( "la1:  " + la1.toString() );
-//    System.out.println( "la2a: " + la2a.toString() );
-//    System.out.println( "la2b: " + la2b.toString() );
+//   /** A constructor which assigns each arg
+//    * to the fields in alphabetical order.
+//    * Must be same number of args as fields.
+//    */
+//   Lala( Object... args ) { super(args); }
+//   Lala( int n ) { super(n,"hmm"); }
+//   Lala( String _s ) { 
+//       this.s = _s;  
+//       this.n = _s.length();
+//       }
 //
-//    // Demo equals:
-//    System.out.println( "la1  equals la2a: " + la1.equals(la2a) );
-//    System.out.println( "la2a equals la2b: " + la2a.equals(la2b) );
-//    System.out.println( "la2a   ==   la2b: " + (la2a == la2b) );
+//   public static void main( String[] args ) {
+//      // Demo the constructor:
+//      Lala la1 = new Lala( 3, "hello" );
+//      Lala la2a = new Lala( 5, "bye" );
+//      Lala la2b = new Lala( 5, "bye" );
+//      Lala la3 = new Lala( 5 );
 //    
-//    // Demo store/retreive from list.
-//
+//      // Demo toString:
+//      System.out.println( "la1:  " + la1.toString() );
+//      System.out.println( "la2a: " + la2a.toString() );
+//      System.out.println( "la2b: " + la2b.toString() );
+//      System.out.println( "la3:  " + la3.toString() );
+// 
+//      System.out.println( "      " + new Lala("supercalifragilistic!") );
+// 
+//      // Demo equals:
+//      System.out.println( "la1  equals la2a: " + la1.equals(la2a) );
+//      System.out.println( "la2a equals la2b: " + la2a.equals(la2b) );
+//      System.out.println( "la2a   ==   la2b: " + (la2a == la2b) );
+//      }
+//     
+//      // todo: Demo hashmap retrieval
 //    }
-    
    
   
 
@@ -49,7 +53,7 @@ import java.lang.reflect.Modifier;
  *  toString prints back the way that you'd call the constructor.
  *  hashcode presumes the object is immutable.)
  * @author Ian Barland
- * @version 2010.Mar.03
+ * @version 2018.Feb.17
  */
 abstract class ObjectIan {
 
@@ -57,7 +61,8 @@ abstract class ObjectIan {
    * Initialize each field with the provided args,
    * in the declared order.
    */
-  public ObjectIan( Object[] args ) {
+  public ObjectIan( Object... args ) {
+      
     // TODO: for efficiency, keep a static Map<Class<? extends ObjectIan>,List<Field>> instanceFields.
     instanceFields = new ArrayList<Field>();
     for (Field f : this.getClass().getDeclaredFields()) {
@@ -68,7 +73,19 @@ abstract class ObjectIan {
       if (!Modifier.isStatic(f.getModifiers())) { instanceFields.add(f); }
       }
 
-      
+    // HACK -- allow the subclass to provide their own constructor (at their own risk), via `super(null)`.
+    if (args==null) return; 
+
+    /*
+    String msg2 = "Debug: ObjectIan constructor: <";
+    for (Field f : instanceFields) {
+        try { msg2 += String.format( "%s %s = %s, ", f.getType().getName(), f.getName(), f.get(this) ); }
+        catch (IllegalAccessException iae) { throw new RuntimeException(iae); }
+        }
+    msg2 +=  ">\n";
+    System.err.printf(msg2);
+    */
+    
     // We could declare Object... args, but we'll stress how our method is abstract:
     // The subclass must have a varargs constructor which calls 'super(args)'.
     //
@@ -79,13 +96,14 @@ abstract class ObjectIan {
                       + " should start with upper case, by convention."
                       + " --  ObjectIan super." );
       }
+    
     if (args.length != this.instanceFields.size()) {
-      String msg = "Must provide " + this.instanceFields.size() + " args to constructor";
-      msg += " `new " + subclassName + "(";
+      String msg = String.format("Must provide %d args to constructor (not %d)", this.instanceFields.size(), args.length );
+      msg += String.format(" `new %s(", subclassName);
       boolean needComma = false;
       for (Field f : this.instanceFields) {
         if (Modifier.isStatic(f.getModifiers())) continue;
-        msg += (needComma ? ", " : "") + "[" + f.getName() + "]";
+        msg += String.format( "%s[%s]", (needComma  ?  ", "  :  ""),  f.getName() );
         needComma = true;
         }
       msg += ")`.";
@@ -104,8 +122,8 @@ abstract class ObjectIan {
         }
       catch(IllegalAccessException e) {
         throw new RuntimeException( "ObjectIan super: "
-                                  + "Security manage doesn't allow accessing fields through reflection. "
-                                  + "You must write the " + subclassName + " constructor yourself.\n"
+                                  + "Security manager doesn't allow accessing fields through reflection. "
+                                    + "You'll have to write the " + subclassName + " constructor yourself.\n"
                                   + e.toString() );
         }
       catch(IllegalArgumentException e) {
@@ -254,6 +272,13 @@ abstract class ObjectIan {
   /* Deficincies of this class:
    * Fundamental:
    *   final fields won't compile -- not init'd.
+   *   a (sub)class can't provide initial/default field values,
+   *     because (a) this class can't tell, and (b) the jvm
+   *     will set those fields *after* this superconstructor completes,
+   *     *overwriting* any assignments made here.
+   *     ...The best solution is just to force the caller to
+   *     write their own constructor, if they want;
+   *     we allow `super(null)` to bypass our superconstructor.
    * 
    *   Can't generate setters (only a "set")
    * To fix/patch:
