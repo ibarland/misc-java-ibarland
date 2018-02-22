@@ -200,7 +200,7 @@ abstract class ObjectIan {
       }
     }
     
-  /** @Override: */
+  @Override
   public String toString() {
     return this.toString(false);
     }
@@ -255,7 +255,7 @@ abstract class ObjectIan {
     
   // In case we want to sort the fields alphabetically:
   private static Comparator<Field> compareFieldsAlphByName = new Comparator<Field>() {
-    /** @Override */
+    @Override
     public int compare(Field f1, Field f2) { return f1.getName().compareTo( f2.getName() ); }
     /* We could upcase the field name, but that'd be ambiguous if a beginner were to
      * have two field names that differed only by case.
@@ -285,3 +285,13 @@ abstract class ObjectIan {
    * - have ObjectMutable, ObjectImmutable ?
    * 
    */
+/* #|
+@author ibarland
+@version 2018-Feb-18
+
+@license: CC-BY 4.0 -- you are free to share and adapt this file
+for any purpose, provided you include appropriate attribution.
+    https://creativecommons.org/licenses/by/4.0/ 
+    https://creativecommons.org/licenses/by/4.0/legalcode 
+Including a link to the *original* file satisifies "appropriate attribution".
+|# */
