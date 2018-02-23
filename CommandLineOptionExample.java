@@ -9,17 +9,19 @@
 public class CommandLineOptionExample {
 
     static CommandLineOption[] options = {
-         new CommandLineOption( "file",  'f',  "foo.txt", "the file to blazblarg" )
-        ,new CommandLineOption( "name",  'n',  "ibarland", "the primary blazlbarger"  )
-        ,new CommandLineOption( "size",  's',  "98", "how many blazzes to blarg (in dozens)" )
-        ,new CommandLineOption( "stuff", null, null, "what to call your stuff" )
-        ,new CommandLineOption( "otherStuff", 'o', "blarg", "the help info for other stuff" )
+                      /*  */
+         new CommandLineOption( "file",  'f',  false, "foo.txt", "the file to blazblarg" )
+        ,new CommandLineOption( "name",  'n',  false, "ibarland", "the primary blazlbarger"  )
+        ,new CommandLineOption( "size",  's',  false, "98", "how many blazzes to blarg (in dozens)" )
+        ,new CommandLineOption( "verbose",  'v',  true, null, "run in verbose mode" )
+        ,new CommandLineOption( "stuff", null, false, null, "what to call your stuff" )
+        ,new CommandLineOption( "otherStuff", 'o', false, "blarg", "the help info for other stuff" )
         };
 
     /* After declaring the above, you can invoke the program with (say) 
      *   java CommandLineOptionExample --size 44 -f baz.txt
      * and then `allOptions` will return:
-     *    { "baz.txt", "ibarland", "44", NULL, "blarg" }
+     *    { "baz.txt", "ibarland", "44", null, "blarg" }
      * Note that these values are in the order that you specify in your array-of-option_info.
      */
   

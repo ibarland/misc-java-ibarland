@@ -1,23 +1,26 @@
-/** This file provides the implementation of the function `allOptions`.
- *
+/** This file provides the implementation of the function `allOptions`. */
+import java.util.*;
+
+/** CommandLineOptions:
  * If callers provide named-arguments on the command-line in any order,
- * then your program can call `allOptions` to get back an array of ALL the option-values
- * (with predefined defaults used for those the caller didn't specify.)
+ * then your program can call `allOptions` to get back an array of ALL the specified option-values,
+ * with predefined defaults used for those the caller didn't specify.
  *
  *  Example: If you want the caller to be able to optionally provide any of the
  *  command-line options `--file`, `--name` and `--size`, then add the following
  *  to your program:
  *
  *    CommandLineOption[] options = {
- *        new CommandLineOption( "file", 'f', null, "the file containing the glubglub" ),
- *        new CommandLineOption( "name", 'n', "ibarland", "the name of the package-author" ),
- *        new CommandLineOption( "size", 's', "45", "the size of the frobzat, in meters." ),
+ *        new CommandLineOption( "file", 'f', false, null, "the file containing the glubglub" ),
+ *        new CommandLineOption( "name", 'n', false, "ibarland", "the name of the package-author" ),
+ *        new CommandLineOption( "size", 's', false, "45", "the size of the frobzat, in meters." ),
  *        };
  *
  *  The four pieces of info you must provide for each option are:
- *    long-version (`--name`), short-version (`-n`), a default value if not provided ("ibarland"),
+ *    long-version (`--name`), short-version (`-n`), is a boolean option?, a default value if not provided ("ibarland"),
  *    and a string which might someday be used in a help-message (but is not currently used).
- *  
+ *    (For boolean options, the default value must be either `null` or `"false"` or `""`.)
+ * 
  * So if the caller invoked "java CommandLineOptionsExample --size 27 -f stuff.txt`,
  * then `allOPtions` would return the array { "stuff.txt", "ibarland", "27" }.
  * The items in the return-array are the same order as you list them in `options`.
@@ -27,27 +30,35 @@
  *    I wanted to be lighter-weight than the C libraries I found.
  *
  * Known bugs:
- * We assume every option is followed by a value!  (No 'binary' flag-options.)
- * If a value looks like an option, this code will get confused (e.g. if you
+ * - We assume every option is followed by a value!  (No 'binary' flag-options.)
+ * - If a value looks like an option, this code will get confused (e.g. if you
  * try to specify a --file whose name is "--size", or if the name of the
  * executable argv[0] is "-n", etc.)!
  */
 
-class CommandLineOption extends ObjectIan {
-
+class CommandLineOption extends ObjectIan { // ObjectIan provides boilerplate constructor, equals, hashcode.
     String longOption;
     Character shortOption;
-    String defaultValue;
+    boolean isBooleanOption;
+    String defaultValue;     // HACK: if this.isBooleanOption, this.defaultValue should be either "true"(String), or null.
     String helpString;
 
-    CommandLineOption( Object... args ) { super(args); } // ObjectIan provides boilerplate constructor, equals, hashcode.
-    /*CommandLineOption( String _longOption, char _shortOption, String _defaultValue, String _helpString ) {
+    CommandLineOption( Object... args ) {  // Call with 5 values for the above 5 fields.
+        super(args); 
+        if (this.isBooleanOption && !ALLOWED_BOOLEAN_DEFAULTS.contains( this.defaultValue instanceof String  ?  (this.defaultValue).toLowerCase() : this.defaultValue )) {
+            throw new IllegalArgumentException(String.format("A boolean CommandLineOption's default must be one of %s.", ALLOWED_BOOLEAN_DEFAULTS));  // todo: add quotes around the `"true"`,`"false"` printed in this message.
+            }
+        }
+    private static List<String> ALLOWED_BOOLEAN_DEFAULTS = Arrays.asList("false","",(String)null);
+    /*CommandLineOption( String _longOption, char _shortOption, boolean _isBooleanOption, String _defaultValue, String _helpString ) {
         this.longOption = _longOption;
         this.shortOption = _shortOption;
+        this.isBooleanOption = _isBooleanOption;
         this.defaultValue = _defaultValue;
         this.helpString = _helpString;
         }
     */
+
     /* Given a string of form "--otherStuff", return the otherStuff.
      * If it wasn't of that form, return null.
      */
@@ -78,15 +89,23 @@ class CommandLineOption extends ObjectIan {
      * except that a "--" will halt the option-searching.
      */
     /*private*/ static String findOption( final CommandLineOption target, final String haystack[] ) {
-        String answerSoFar = target.defaultValue;
+        String answerSoFar = (!target.isBooleanOption)  
+                           ? target.defaultValue
+                           : null;
+
         for (int i=0;  i < haystack.length-1;  ++i) {
             if (haystack[i].equals("--")) break;  /* "--" stops option-processing */
             String    asLongOption  = extractLongOptionName( haystack[i]);
             Character asShortOption = extractShortOptionName(haystack[i]);
             if (   (asLongOption  != null &&  asLongOption.equals(target.longOption))
                 || (asShortOption != null && asShortOption.equals(target.shortOption))) {
-                answerSoFar = haystack[i+1];
-                ++i;  // skip over haystack[i+1] as a potential next-arg.
+                if (target.isBooleanOption) {
+                    answerSoFar = "true";
+                    }
+                else {
+                    answerSoFar = haystack[i+1];
+                    ++i;  // skip over haystack[i+1] as a potential next-arg.
+                    }
                 }
             }
         return answerSoFar;

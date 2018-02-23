@@ -1,12 +1,38 @@
-import static org.junit.Assert.*;
-import org.junit.After;
-import org.junit.Before;
+//import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class CommandLineOptionTest {
 
+    static int testCount=0;
+    static int failCount=0;
+    static int currColumn=0;
+    static void printTstMsg(String msg) {
+        currColumn=0;
+        System.err.printf("\n%s\n", msg);
+        }
+    static void printTstSummary() {
+        printTstMsg( String.format("Completed %d tests (%d failed).", testCount, failCount) );
+        }
+    static void assertEquals( Object a, Object b ) {
+        ++testCount;
+        boolean areEqual = (a==null) ? (b==null) : a.equals(b);
+        if (areEqual) {
+            System.err.printf(".");
+            ++currColumn;
+            if (currColumn%5==0) System.err.printf(" ");
+            }
+        else {
+            ++failCount;
+            System.err.printf("!");
+            System.err.printf("test #%d failed; got %s but expected %s.\n", testCount, b.toString() , a.toString() );
+            currColumn=0;
+            }
+        }
+        
+
     @Test
     public void testExtractLongOptionName(){
+        printTstMsg("ExtractLongOptionName");
         assertEquals( "hello", CommandLineOption.extractLongOptionName("--hello"));
         assertEquals( null, CommandLineOption.extractLongOptionName("noLeadingDashes"));
         assertEquals( null, CommandLineOption.extractLongOptionName("-hello"));
@@ -18,6 +44,7 @@ public class CommandLineOptionTest {
 
     @Test
     public void testExtractShortOptionName(){
+        printTstMsg("ExtractShortOptionName");
         assertEquals( new Character('h'), CommandLineOption.extractShortOptionName("-h"));
         assertEquals( null, CommandLineOption.extractShortOptionName("h"));
         assertEquals( null, CommandLineOption.extractShortOptionName("hello"));
@@ -33,23 +60,47 @@ public class CommandLineOptionTest {
 
     @Test
     public void testfindOption() {
-        String[] sample1 = { "--hello","tag", "-b","99", "--", "--hello", "tag2" } ;
-        String[] sample2 = { "--hello","tag", "-b","99", "--hello", "tag2" } ;
+        printTstMsg("testFindOption");
+        String[][] samples = { {}
+                             , { "--" }
+                             , {"--hello","tag", "--hello","tag", "--isYummy", "-b","99", "--", "--hello", "tag2" }
+                             , {"--hello","tag", "--", "--hello", "tag1" }
+                             , { "--hello","tag", "--isYummy","", "-b","99", "--", "--hello", "tag2" }
+                             , { "--hello","tag", "-b","33", "--hello", "tag2" }
+                             , { "-y", "-m", "-n", "--hello","tag" }
+                             };
         CommandLineOption[] options = {
-            new CommandLineOption( "hello", 'h', "ibarland", "the name of the package-author" ),
-            new CommandLineOption( "bye", 'b', "99", "the size of the frobzat, in meters." ),
+            new CommandLineOption( "hello", 'h', false, "ibarland", "the name of the package-author" ),
+            new CommandLineOption( "bye", 'b', false, "99", "the size of the frobzat, in meters." ),
+            new CommandLineOption( "isNice",  'n', true, "false", "is this a nice  frozbat?" ),
+            new CommandLineOption( "isYummy", 'y', true, "",      "is this a yummy frozbat?" ),
+            new CommandLineOption( "isMean",  'm', true, null,    "is this a mean  frozbat?" ),
             };
-        assertEquals( "tag", CommandLineOption.findOption( options[0], sample1 ));
-        assertEquals( "99", CommandLineOption.findOption( options[1], sample1 ));
-        assertEquals( "tag2", CommandLineOption.findOption( options[0], sample2 ));
+        assertEquals( "ibarland", CommandLineOption.findOption( options[0], samples[0] ));
+        assertEquals( "ibarland", CommandLineOption.findOption( options[0], samples[1] ));
+        assertEquals( "tag", CommandLineOption.findOption( options[0], samples[2] ));
+
+        assertEquals( "99", CommandLineOption.findOption( options[1], samples[0] ));
+        assertEquals( "33", CommandLineOption.findOption( options[1], samples[5] ));
+
+        assertEquals( null, CommandLineOption.findOption( options[2], samples[0] ));
+        assertEquals( null, CommandLineOption.findOption( options[3], samples[0] ));
+        assertEquals( null, CommandLineOption.findOption( options[4], samples[0] ));
+        assertEquals( "true", CommandLineOption.findOption( options[2], samples[6] ));
+        assertEquals( "true", CommandLineOption.findOption( options[3], samples[6] ));
+        assertEquals( "true", CommandLineOption.findOption( options[4], samples[6] ));
+
+        assertEquals( "true", CommandLineOption.findOption( options[3], samples[2] ));  // boolean flag present, long option
         }
 
 
     @Test
     public void testApparentOptionIsLegal() {
+        printTstMsg("testApparentOptionIsLegal");
         CommandLineOption[] options = {
-            new CommandLineOption( "name", 'n', "ibarland", "the name of the package-author" ),
-            new CommandLineOption( "size", 's', "45", "the size of the frobzat, in meters." ),
+            new CommandLineOption( "name", 'n', false, "ibarland", "the name of the package-author" ),
+            new CommandLineOption( "size", 's', false, "45", "the size of the frobzat, in meters." ),
+            new CommandLineOption( "isFun", 'f', true, null, "the size of the frobzat, in meters." ),
             };
         assertEquals(  true, CommandLineOption.apparentOptionIsLegal( options, "--name" ));
         assertEquals(  true, CommandLineOption.apparentOptionIsLegal( options, "--size" ));
@@ -59,8 +110,17 @@ public class CommandLineOptionTest {
         assertEquals(  false, CommandLineOption.apparentOptionIsLegal( options, "--zasd" ));
         assertEquals(  false, CommandLineOption.apparentOptionIsLegal( options, "-z" ));
         assertEquals(  true, CommandLineOption.apparentOptionIsLegal( options, "--" ));
+        assertEquals(  true, CommandLineOption.apparentOptionIsLegal( options, "-f" ));
+        assertEquals(  true, CommandLineOption.apparentOptionIsLegal( options, "--isFun" ));
         }
 
-
+    public static void main( String... args ) {
+        CommandLineOptionTest thiss = new CommandLineOptionTest();
+        thiss.testExtractLongOptionName();
+        thiss.testExtractShortOptionName();
+        thiss.testfindOption();
+        thiss.testApparentOptionIsLegal();
+        printTstSummary();
+        }
 
     }
