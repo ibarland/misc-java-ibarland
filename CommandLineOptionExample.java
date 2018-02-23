@@ -19,10 +19,15 @@ public class CommandLineOptionExample {
         };
 
     /* After declaring the above, you can invoke the program with (say) 
-     *   java CommandLineOptionExample --size 44 -f baz.txt
+     *    java CommandLineOptionExample --size 44 -f baz.txt
      * and then `allOptions` will return:
-     *    { "baz.txt", "ibarland", "44", null, "blarg" }
+     *    { "baz.txt", "ibarland", "44", null, null, "blarg" }
      * Note that these values are in the order that you specify in your array-of-option_info.
+     *
+     * If the user includes a boolean flag: and then `allOptions` will include the string `"true"` (, not a boolean!) instead of `null`:
+     *    java CommandLineOptionExample -v --size 44 -f baz.txt
+     * returns
+     *    { "baz.txt", "ibarland", "44", "true", null, "blarg" }
      */
   
     public static void main( String[] args ) {
@@ -31,7 +36,8 @@ public class CommandLineOptionExample {
         // either taken from the command-line, or from the default given in `options[]`.
     
         for (int i=0;  i<settings.length; ++i) {
-            System.out.printf("Option #%d (%s) is \"%s\".\n", i, options[i].longOption, settings[i] );
+            String quoteChar = (settings[i]!=null)  ?  "\""  :  "";  // don't put quotes around `null`.
+            System.out.printf("Option #%d (%s) is %s%s%s.\n", i, options[i].longOption, quoteChar, settings[i], quoteChar );
             }
 
         }
