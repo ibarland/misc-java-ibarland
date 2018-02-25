@@ -9,7 +9,6 @@
 public class CommandLineOptionExample {
 
     static CommandLineOption[] options = {
-                      /*  */
          new CommandLineOption( "file",  'f',  false, "foo.txt", "the file to blazblarg" )
         ,new CommandLineOption( "name",  'n',  false, "ibarland", "the primary blazlbarger"  )
         ,new CommandLineOption( "size",  's',  false, "98", "how many blazzes to blarg (in dozens)" )

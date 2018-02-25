@@ -1,19 +1,21 @@
-//import static org.junit.Assert.*;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
+/** Unit tests. */
 public class CommandLineOptionTest {
 
-    static int testCount=0;
-    static int failCount=0;
-    static int currColumn=0;
-    static void printTstMsg(String msg) {
+    private static int testCount=0;
+    private static int failCount=0;
+    private static int currColumn=0;
+    private static void printTstMsg(String msg) {
         currColumn=0;
-        System.err.printf("\n%s\n", msg);
+        //System.err.printf("\n%s\n", msg);
         }
-    static void printTstSummary() {
+        
+    private static void printTstSummary() {
         printTstMsg( String.format("Completed %d tests (%d failed).", testCount, failCount) );
         }
-    static void assertEquals( Object a, Object b ) {
+    private static void xxassertEquals( Object a, Object b ) {
         ++testCount;
         boolean areEqual = (a==null) ? (b==null) : a.equals(b);
         if (areEqual) {
@@ -28,7 +30,6 @@ public class CommandLineOptionTest {
             currColumn=0;
             }
         }
-        
 
     @Test
     public void testExtractLongOptionName(){
@@ -114,7 +115,8 @@ public class CommandLineOptionTest {
         assertEquals(  true, CommandLineOption.apparentOptionIsLegal( options, "--isFun" ));
         }
 
-    public static void main( String... args ) {
+    /** Run the other tests. */
+    private static void main( String... args ) {
         CommandLineOptionTest thiss = new CommandLineOptionTest();
         thiss.testExtractLongOptionName();
         thiss.testExtractShortOptionName();

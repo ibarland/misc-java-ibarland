@@ -37,10 +37,18 @@ import java.util.*;
  */
 
 class CommandLineOption extends ObjectIan { // ObjectIan provides boilerplate constructor, equals, hashcode.
+    /** How to specify this option on the command line (preceded by the two chars `"--"`). */
     String longOption;
+    /** How to specify this option on the command line (preceded by the one char `"-"`). */
     Character shortOption;
+    /** Is this option an on/off (boolean) sort, as opposed to having an associated value? */
     boolean isBooleanOption;
-    String defaultValue;     // HACK: if this.isBooleanOption, this.defaultValue should be either "true"(String), or null.
+    /** The default value for this option, if not provided on the command line.
+     *  This field doesn't make sense for booleans (which are always off(`null`) or on(`"true"`).
+     *  For boolean options, initialize this to `null` (though `""` and `"false"` also accepted).
+     */
+    String defaultValue;
+    /** A short, one-line summary of what this option means to the program. */
     String helpString;
 
     CommandLineOption( Object... args ) {  // Call with 5 values for the above 5 fields.
@@ -83,10 +91,12 @@ class CommandLineOption extends ObjectIan { // ObjectIan provides boilerplate co
         }
                            
                            
-    /* Search haystack[] for the indicated option, and return the *next* item of haystack as its value.
-     * If not located, return the option's default value.
-     * If multiple occurrences of the option, we take the last one ('overwriting' previous ones),
-     * except that a "--" will halt the option-searching.
+    /* @return the option's value, taken from the command line:
+     * Usually the *next* word in `haystack[]` after the option's short- or long-name,
+     * or the default value (if not present).
+     * For boolean options, either `null` or the string `"true"` is returned.
+     * If multiple occurrences of the option, we take the last one ('overwriting' previous ones).
+     * In all cases, if haystack contains `"--"`, we won't search beyond that.
      */
     /*private*/ static String findOption( final CommandLineOption target, final String haystack[] ) {
         String answerSoFar = (!target.isBooleanOption)  
@@ -137,13 +147,17 @@ class CommandLineOption extends ObjectIan { // ObjectIan provides boilerplate co
 
 
 
-    /* Given command-line arguments,
-     * return an array with the values for ALL possible options.
+    /* @return an array with the values for ALL options in `options`,
+     * based on `argv`.
      * The strings are taken from the command-line if provided, else from `options[i].default`
-     * So if argv = { "--size", "27", "-f", "foo.txt" }
-     * and options was an array with the options
-     *    { {"file","f","-"}, {"name",'n',"ibarland"}, {"size",'s',null} }
-     * then we'd return {"foo.txt", "ibarland", "27"}.
+     * So if <tt>argv == { "--size", "27", "-v", "-f", "foo.txt" }</tt>
+     * and options was an array with the options<pre>
+       { new CommandLineOption("file","f",false,"-","…"), 
+         new CommandLineOption("name",'n',false,"ibarland","…"), 
+         new CommandLineOption("size",'s',false,"48","…")
+         new CommandLineOption("verbose",'v',true,null,"…") }
+     </pre>
+     * then we'd return {"foo.txt", "ibarland", "27", "true"}.
      */
     public static String[] allOptions( String[] argv, CommandLineOption[] options ) {
         String[] allOpts = new String[ options.length ];
