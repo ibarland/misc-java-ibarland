@@ -4,10 +4,11 @@
  */
 
 
-/* The possible command-line options to a program. 
+/** Demonstrate how to use `CommandLineOption` and its methods `allOptions`.
  */
 public class CommandLineOptionExample {
 
+    /** The array of all options which this program can process. */
     static CommandLineOption[] options = {
          new CommandLineOption( "file",  'f',  false, "foo.txt", "the file to blazblarg" )
         ,new CommandLineOption( "name",  'n',  false, "ibarland", "the primary blazlbarger"  )
@@ -29,6 +30,9 @@ public class CommandLineOptionExample {
      *    { "baz.txt", "ibarland", "44", "true", null, "blarg" }
      */
   
+    /** Just print the program's options (using any values from command-line arguments,
+     * and the default-values specified in this file).
+     */
     public static void main( String[] args ) {
         String[] settings = CommandLineOption.allOptions( args, options );
         // Now, the array `settings` contains all the options, in order:

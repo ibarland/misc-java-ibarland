@@ -1,7 +1,7 @@
-/** This file provides the implementation of the function `allOptions`. */
 import java.util.*;
 
-/** CommandLineOptions:
+/** CommandLineOptions: Support for processing options provided on the command-line.
+ *
  * If callers provide named-arguments on the command-line in any order,
  * then your program can call `allOptions` to get back an array of ALL the specified option-values,
  * with predefined defaults used for those the caller didn't specify.
@@ -10,20 +10,30 @@ import java.util.*;
  *  command-line options `--file`, `--name` and `--size`, then add the following
  *  to your program:
  *
- *    CommandLineOption[] options = {
- *        new CommandLineOption( "file", 'f', false, null, "the file containing the glubglub" ),
- *        new CommandLineOption( "name", 'n', false, "ibarland", "the name of the package-author" ),
- *        new CommandLineOption( "size", 's', false, "45", "the size of the frobzat, in meters." ),
- *        };
+ *  static CommandLineOption[] options = {
+ *       new CommandLineOption( "file",  'f',  false, "foo.txt", "the file to blazblarg" )
+        ,new CommandLineOption( "name",  'n',  false, "ibarland", "the primary blazlbarger"  )
+ *      ,new CommandLineOption( "verbose",  'v',  true, null, "run in verbose mode" )
+ *      ,new CommandLineOption( "size",  's',  false, "98", "how many blazzes to blarg (in dozens)" )
+ *      };
  *
- *  The four pieces of info you must provide for each option are:
+ *  The pieces of info you must provide for each option are:
  *    long-version (`--name`), short-version (`-n`), is a boolean option?, a default value if not provided ("ibarland"),
  *    and a string which might someday be used in a help-message (but is not currently used).
  *    (For boolean options, the default value must be either `null` or `"false"` or `""`.)
  * 
- * So if the caller invoked "java CommandLineOptionsExample --size 27 -f stuff.txt`,
- * then `allOPtions` would return the array { "stuff.txt", "ibarland", "27" }.
- * The items in the return-array are the same order as you list them in `options`.
+ * After declaring the above, you can invoke the program with (say) 
+ *    java CommandLineOptionExample --size 44 -f baz.txt
+ * and then `allOptions` will return:
+ *    { "baz.txt", "ibarland", null, "44" }
+ * Note that these values are in the order that you specify in your array-of-option_info.
+ *
+ * If the user includes a boolean flag: and then `allOptions` will include the string `"true"` (, not a boolean!) instead of `null`:
+ *    java CommandLineOptionExample -v --size 44 -f baz.txt
+ * returns
+ *    { "baz.txt", "ibarland", "true", "44" }
+ *
+ *
  * 
  * See also: ...there must be other more robust libraries out there.
  *    I'm making this to be parallel to the C-language version I wrote, which 
@@ -35,7 +45,6 @@ import java.util.*;
  * try to specify a --file whose name is "--size", or if the name of the
  * executable argv[0] is "-n", etc.)!
  */
-
 class CommandLineOption extends ObjectIan { // ObjectIan provides boilerplate constructor, equals, hashcode.
     /** How to specify this option on the command line (preceded by the two chars `"--"`). */
     String longOption;
