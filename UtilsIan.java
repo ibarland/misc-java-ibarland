@@ -50,7 +50,7 @@ class UtilsIan {
      */
     public static boolean equalsApprox( double a, double b, int bitsTolerance ) { 
         return (a==b)    // hotpath; also handles infinities.
-            || Math.abs(a-b)  <  Math.max( Math.ulp(a), Math.ulp(b) ) * Math.pow(2,bitsTolerance);
+            || Math.abs(a-b)  <  Math.max( Math.ulp(a), Math.ulp(b) ) * (0b1L << bitsTolerance);
         }
     public static boolean equalsApprox( double a, double b ) { return equalsApprox(a,b,DEFAULT_BITS_TOLERANCE); }
     
