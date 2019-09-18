@@ -1,3 +1,5 @@
+// part of repo:  https://github.com/ibarland/misc-java-ibarland
+
 import java.util.*;
 
 class UtilsIan {
@@ -38,8 +40,8 @@ class UtilsIan {
     }
 
 
-    static final int DEFAULT_BITS_TOLERANCE = 20;
-    // 20bits slack =>  ~32bits precision => within ~4billion => values near 1.0 must be equal to ~9 decimal places
+    static final int DEFAULT_BITS_TOLERANCE = 10; // very generous?; 5 is more resonable?
+    // 10bits slack =>  ~42bits precision => within ~4billion => values near 1.0 must be equal to ~12 decimal places
 
     /** @return whether `a` and `b` are approximately equal.
      *  That is, whether they are the same up to the last `bitsTolerance` bits (default @value{DEFAULT_BITS_TOLERANCE}).
@@ -49,8 +51,8 @@ class UtilsIan {
      *  if there were NOT weird cases where it fails.
      */
     public static boolean equalsApprox( double a, double b, int bitsTolerance ) { 
-        return (a==b)    // hotpath; also handles infinities.
-            || Math.abs(a-b)  <  Math.max( Math.ulp(a), Math.ulp(b) ) * (0b1L << bitsTolerance);
+        return  a==b // hotpath; also handles infinities and NaNs.
+            || (Math.abs(a-b)  <  Math.max( Math.ulp(a), Math.ulp(b) ) * (0b1L << bitsTolerance));
         }
     public static boolean equalsApprox( double a, double b ) { return equalsApprox(a,b,DEFAULT_BITS_TOLERANCE); }
     
@@ -74,8 +76,14 @@ class UtilsIan {
             testEqualsApprox2( x2*scale, z *scale, false );
             testEqualsApprox2( y *scale, z *scale, false );
             }
+        assert  equalsApprox( +0.0, -0.0, 0 );
+        assert  equalsApprox( +Double.MIN_VALUE, -Double.MIN_VALUE, 2 );
+        assert !equalsApprox( +Double.MIN_VALUE, -Double.MIN_VALUE, 0 );
+        assert !equalsApprox( +Double.MIN_VALUE*2, -Double.MIN_VALUE*2, 2 );
+        assert  equalsApprox( +Double.MIN_VALUE*2, -Double.MIN_VALUE*2, 3 );
         }
 
+    /** test equalsApprox(x,y) as well as (y,x) and (1/x,1/y) and (1/y,1/x). */
     public static void testEqualsApprox2(double x, double y) { testEqualsApprox2(x,y,true); }
     public static void testEqualsApprox2(double x, double y, boolean expectEqual) {
         assert equalsApprox(    x,    y) == expectEqual;
