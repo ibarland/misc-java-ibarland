@@ -49,28 +49,28 @@ class UtilsIan {
      *  and if one argument is 0 then it also works (unlike specifying a relative tolerance).
      *
      *  SURPRISING BEHAVIOR: even if equalsApprox(a,b), it is UNLIKELY that equalsApprox(0,a-b).
-     *  That's because of underflow/denormalizing:
+     *  That's because:
      *          around 0, doubles can      distinguish differences of ±1e-300, 
      *  whereas around 1, doubles can only distinguish differences of ±1e-016.
      *  (Hmm: maybe we should use one comparison if max(a,b)>1e-12 say, and only consider Math.ulp below that?)
      *
      *  So `bitsTolerance`= 0  behaves as exactly-equal (aka `Double.equals`).
      *     `bitsTolerance`=64 always passes (since 64b in a double).
-     *     `bitsTolerance`=52 passes within a factor of 2  I think (since 52 mantissa-bits);
-     *     `bitsTolerance`=53 passes within a factor of 4 (uses 1 bit of the exponent).
+     *     `bitsTolerance`=52 passes within a factor of 2 I think (since 52 mantissa-bits can differ);
+     *     `bitsTolerance`=53 passes within a factor of 4 (entire mantissa + 1bit of exponent can differ).
+     *     `bitsTolerance`=51 passes within a factor of 0.5 (entire mantissa + 1bit of exponent can differ).
+     *     `bitsTolerance`=22 passes within a factor of 1/2^30 (that is, 1e-9), I guess.
      *
      *  DISCLAIMER: this function is NOT exhaustively tested, and I'd actually be mildly surprised
      *  if there were NOT weird cases where it fails.
      */
     public static boolean equalsApprox( double a, double b, int bitsTolerance ) { 
         return  a==b // hotpath; also handles infinities and ±0s (but not NaNs) ?
-            || (Math.abs(a-b)  <  Math.min( Math.ulp(a), Math.ulp(b) ) * (0b1L << bitsTolerance))
+            || Math.abs(a-b)  <  (Math.min(Math.ulp(a), Math.ulp(b)) * (0b1L << bitsTolerance))
             || (Double.isNaN(a) && Double.isNaN(b));
-        /* other implementations, ranked by least-to-most failed tests. */
-        //return  a==b // hotpath; also handles infinities and NaNs.
-        //    || Math.abs(Double.doubleToLongBits(a) - Double.doubleToLongBits(b)) < (long)(0b1L << bitsTolerance);
-        //return  a==b // hotpath; also handles infinities and NaNs.
-        //    || Math.abs(Double.doubleToLongBits(a-b)) < (long)(0b1L << bitsTolerance);
+        /* other implementations, ranked by least-to-most failed tests (keep the a==b and NaN above, though): */
+        //    || Math.abs(Double.doubleToLongBits(a) - Double.doubleToLongBits(b)) < (0b1L << bitsTolerance);
+        //    || Math.abs(Double.doubleToLongBits(a-b)) < (0b1L << bitsTolerance);
         }
     public static boolean equalsApprox( double a, double b ) { return equalsApprox(a,b,DEFAULT_BITS_TOLERANCE); }
     
