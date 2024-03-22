@@ -63,6 +63,9 @@ class UtilsIan {
      *
      *  DISCLAIMER: this function is NOT exhaustively tested, and I'd actually be mildly surprised
      *  if there were NOT weird cases where it fails.
+     *
+     *  See unit-tests at   https://github.com/ibarland/misc-java-ibarland/blob/main/UtilsIan.java
+     *  @license CC-BY
      */
     public static boolean equalsApprox( double a, double b, int bitsTolerance ) { 
         return  a==b // hotpath; also handles infinities and ±0s (but not NaNs) ?
@@ -189,3 +192,15 @@ class UtilsIan {
     public static void logFailedAssertEquals(Object a, Object b) { logFailedAssertEquals(a,b,true); }
     public static void logPassedAssertEquals(Object a, Object b) { logPassedAssertEquals(a,b,true); }
   }
+
+/*
+@author ibarland
+@version 2024-Mar-20
+
+@license CC-BY -- share/adapt this file freely, but include attribution, thx.
+    https://creativecommons.org/licenses/by/4.0/ 
+    https://creativecommons.org/licenses/by/4.0/legalcode 
+Including a link to the github repo satisifies "appropriate attribution":
+    https://github.com/ibarland/misc-java-ibarland/blob/main/UtilsIan.java
+
+*/
