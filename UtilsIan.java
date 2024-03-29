@@ -140,25 +140,29 @@ class UtilsIan {
     /** Just run our unit tests. Be sure to run `java` with `--assertionsEnabled` (or, `-ea`).
      */
     public static void main( /* @NonNull */ String... __ ) {
-        confirmAssertionsEnabled();
+        assertAssertionsEnabled();
         testEqualsApprox();  // test a helper I wrote.
 
         System.out.println("tests finished.");
       }
 
-    public static void confirmAssertionsEnabled() {
-        boolean assertionsEnabled = false;
+    /** Make sure that assertions are enable (else we throw an exception).
+     */
+    public static void assertAssertionsEnabled() {
+        boolean assertionsDefinitelyEnabled = false;
         try {
             assert( "Just confirming that assertions are enabled." == "Yep, everything is fine." );
             }
         catch (AssertionError e) {
-            assertionsEnabled = true;
+            assertionsDefinitelyEnabled = true;
             }
-        if (!assertionsEnabled) {
-            System.err.println("Uh-oh, assertions aren't enabled!   -- re-run with `java --enableAssertions UtilsIan`.");
+        if (!assertionsDefinitelyEnabled) {
+            System.err.println("Uh-oh, assertions aren't enabled!\nRe-run with `java -enableassertions`.");
             }
         }
 
+    /** Make sure that assertions are enable (else we throw an exception).
+     */
     public static void assertEquals( Object a, Object b ) {
 	if (!(a.equals(b))) {
             logFailedAssertEquals(a,b);
