@@ -1,45 +1,101 @@
-# general backups
+############# OS
+
+### macOS
+.DS_Store
+.DS_Store?
+.localized
+Untitled Folder
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+############# Editors:
+
+### vi/vim
+[._]*.swp
 *~
 
-# java, and BlueJ
-*.class
+
+### emacs
+*~
+.#*.el
+
+### drracket
+\#*#*#
+Untitled.rkt
+Untitled-[0-9].rkt
+Untitled-[0-9][0-9].rkt
+
+### powerpoint:
+~$*
+
 package.bluej
 *.ctxt
 
-
-# Object files
+########### languages 
+### C/C++
+core
+a.out
 *.o
-*.ko
-*.obj
-*.elf
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
 *.so
 *.so.*
+*.a
+
+
 *.dylib
-
-# Executables
+*.dSYM
+*.dll
 *.exe
-a.out
 *.app
-*.i*86
-*.x86_64
-*.hex
-*.bin
-# Most files are libraries (generating .o), and already ignored.
-# One exception are the executable C tests:
-*-test
+# perhaps?:   *.x86_64  .hex .bin .i*86   *.elf *.obj *.ko
 
-# Debug files
-*.dSYM/
+
+### java
+*.class
+
+# python
+.pyc
+.mypy_cache
+__pycache__
+
+### racket
+*.zo
+*.dep
+compiled/
+
+
+
+########## packages
+
+*.dmg
+*.tar
+*.jar
+*.gz
+*.zip
+*.7z
+*.iso
+*.rar
+
+
+########### apps
+
+### latex
+*.aux
+*.dvi
+*.log
+
+### unison (file-synchronizer)
+*#unisondiff-
+
+
+############ personal
+
+[fgh]oo
+[fgh]oo.*
+[FGH]oo.java
+foo[0-9]
+foo[0-9].*
+fooasdf
+fooasdf.*
+[Tt]mp
