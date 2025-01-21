@@ -1,8 +1,9 @@
 // part of repo:  https://github.com/ibarland/misc-java-ibarland
 
+package Helpers320;
 import java.util.*;
 
-class UtilsIan {
+public class UtilsIan {
   //----------------------------------------------------------------
   // static helper functions:
   // Mostly, type-conversion functions with names I can remember.
@@ -176,7 +177,7 @@ class UtilsIan {
     public static void assertTrue(  boolean a ) { assertEquals(a,true ); }
     public static void assertFalse( boolean a ) { assertEquals(a,false); }
     
-    /* Like assertEquals, but call nearlyEquals. */
+    /* Like assertEquals, but call equalsApprox. */
     public static void assertEqualsApprox( double a, double b, boolean expectEqual ) {
         if (equalsApprox(a,b) != expectEqual) {
             logFailedAssertEquals(a,b,expectEqual);
