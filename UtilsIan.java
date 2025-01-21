@@ -62,15 +62,15 @@ class UtilsIan {
      *     `bitsTolerance`=22 passes within a factor of 1/2^30 (that is, 1e-9), I guess.
      *
      *  DISCLAIMER: this function is NOT exhaustively tested, and I'd actually be mildly surprised
-     *  if there were NOT weird cases where it fails.
+     *  if there were NOT weird cases where it fails compared to simpler tests.
      *
-     *  See unit-tests at   https://github.com/ibarland/misc-java-ibarland/blob/main/UtilsIan.java
+     *  See unit-tests at   https://github.com/ibarland/misc-java-ibarland/blob/main/NearlyEqualsCompareAlgs.java
      *  @license CC-BY
      */
     public static boolean equalsApprox( double a, double b, int bitsTolerance ) { 
         return  a==b // hotpath; also handles infinities and ±0s (but not NaNs) ?
             || Math.abs(a-b)  <  (Math.min(Math.ulp(a), Math.ulp(b)) * (0b1L << bitsTolerance))
-        /* other implementations, ranked by least-to-most failed tests (keep the a==b and NaN above, though): */
+        /* two other implementations, ranked by least-to-most failed tests (keep the a==b and NaN above, though): */
         //  || Math.abs(Double.doubleToLongBits(a) - Double.doubleToLongBits(b)) < (0b1L << bitsTolerance)
         //  || Math.abs(Double.doubleToLongBits(a-b)) < (0b1L << bitsTolerance)
             || (Double.isNaN(a) && Double.isNaN(b))
