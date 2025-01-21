@@ -2,7 +2,7 @@
 
 import java.util.*;
 
-class NearlyEqualsTest {
+class NearlyEqualsCompareAlgs {
   /*
   int debugOutThreshold = 0;
   // methods assert, debugPrint
@@ -44,9 +44,22 @@ class NearlyEqualsTest {
      *  @license CC-BY
      */
     public static boolean equalsApprox( double a, double b, int bitsTolerance ) { 
-        return equalsApprox_v4(a,b,bitsTolerance);
+        return equalsApprox_v1(a,b,bitsTolerance);
         }
     public static boolean equalsApprox( double a, double b ) { return equalsApprox(a,b,DEFAULT_BITS_TOLERANCE); }
+
+    /** UPSHOT OF COMPARING ALGS:
+     * v1,v2 only report two errors, on my test suite.
+     * v3 reports a lot.
+     * v4 reports six.
+     * CAVEAT: my test suite is not necessarily any good!
+     *	 
+     * v1,v2,v3 are all very similar -- in fact I repeated the nearly-same lines, just commenting out a copy of each.
+     */
+
+
+
+
 
     public static boolean equalsApprox_v1( double a, double b, int bitsTolerance ) { 
         return  a==b // hotpath; also handles infinities and ±0s (but not NaNs) ?
@@ -224,8 +237,8 @@ class NearlyEqualsTest {
     public static void logPassedAssertEquals(Object a, Object b, boolean expectEqual) {
         log(".");
         }
-    public static void log(String msg) {
-        System.out.printf("." );
+    public static void log(String fmt, Object... vals) {
+        System.out.printf(fmt, vals);
         }
 
     public static void assertEqualsApprox(   double a, double b) { assertEqualsApprox(   a,b,true); }
