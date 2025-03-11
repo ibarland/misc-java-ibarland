@@ -65,6 +65,8 @@ public class UtilsIan {
      *  DISCLAIMER: this function is NOT exhaustively tested, and I'd actually be mildly surprised
      *  if there were NOT weird cases where it fails compared to simpler tests.
      *
+     *  Cf. https://docs.rs/assert_float_eq/latest/assert_float_eq/macro.expect_f64_near.html
+     *
      *  See unit-tests at   https://github.com/ibarland/misc-java-ibarland/blob/main/NearlyEqualsCompareAlgs.java
      *  @license CC-BY
      */
